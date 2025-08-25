@@ -94,7 +94,7 @@ const transactionSchema = new mongoose.Schema({
   paymentProvider: { type: String },
   
   // Provider transaction details
-  providerTransactionId: { type: String }, // Stripe payment intent, PayPal transaction ID
+  providerTransactionId: { type: String }, // Stripe payment intent, PayPal transaction I
   providerStatus: { type: String },
   providerFees: { type: Number, default: 0 },
   
