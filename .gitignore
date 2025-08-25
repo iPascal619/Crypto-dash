@@ -1,0 +1,30 @@
+# Ignore environment files and secrets
+.env
+.env.*
+backend/.env
+backend/.env.*
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+
+# Misc
+*.swp
+*.swo
+*.tmp
+*.bak
+
+# Terraform
+terraform/.terraform/
+terraform/terraform.tfstate*

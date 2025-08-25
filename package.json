@@ -1,0 +1,20 @@
+{
+  "name": "cryptodash-production",
+  "version": "1.0.0",
+  "description": "CryptoDash Production Deployment",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "cd backend && NODE_ENV=production node server.js",
+    "dev": "cd backend && nodemon server.js",
+    "install-backend": "cd backend && npm install",
+    "build": "npm run install-backend",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
+    "pm2:restart": "pm2 restart ecosystem.config.js",
+    "logs": "pm2 logs cryptodash"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

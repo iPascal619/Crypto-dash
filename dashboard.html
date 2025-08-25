@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoDash - Trading Dashboard</title>
+    
+    <!-- External Libraries -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for Trading Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- TradingView Lightweight Charts -->
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    
+    <!-- Stripe Payment Processing -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>₿</text></svg>">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <i class="fab fa-bitcoin"></i>
+                <span>CryptoDash</span>
+            </div>
+            <div class="loading-spinner"></div>
+            <p class="loading-text" id="loadingText">Initializing your trading platform...</p>
+            <div class="loading-steps" id="loadingSteps">
+                <div class="step" id="step1">🔧 Loading Firebase...</div>
+                <div class="step" id="step2">🔐 Checking authentication...</div>
+                <div class="step" id="step3">📊 Setting up dashboard...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fab fa-bitcoin"></i>
+                <span class="logo-text">CryptoDash</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <div class="menu-section">
+                <h6 class="menu-label">TRADING</h6>
+                <ul class="menu-list">
+                    <li class="menu-item active">
+                        <a href="#dashboard" class="menu-link" data-page="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#spot-trading" class="menu-link" data-page="spot-trading">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Spot Trading</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#futures" class="menu-link" data-page="futures">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Futures</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#options" class="menu-link" data-page="options">
+                            <i class="fas fa-cog"></i>
+                            <span>Options</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h6 class="menu-label">PORTFOLIO</h6>
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="#portfolio" class="menu-link" data-page="portfolio">
+                            <i class="fas fa-wallet"></i>
+                            <span>Portfolio</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#analytics" class="menu-link" data-page="analytics">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#pnl" class="menu-link" data-page="pnl">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>P&L Reports</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h6 class="menu-label">DEFI</h6>
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="#staking" class="menu-link" data-page="staking">
+                            <i class="fas fa-coins"></i>
+                            <span>Staking</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#yield-farming" class="menu-link" data-page="yield-farming">
+                            <i class="fas fa-seedling"></i>
+                            <span>Yield Farming</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#liquidity" class="menu-link" data-page="liquidity">
+                            <i class="fas fa-swimming-pool"></i>
+                            <span>Liquidity Pools</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="menu-section">
+                <h6 class="menu-label">TOOLS</h6>
+                <ul class="menu-list">
+                    <li class="menu-item">
+                        <a href="#bot-trading" class="menu-link" data-page="bot-trading">
+                            <i class="fas fa-robot"></i>
+                            <span>Bot Trading</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#alerts" class="menu-link" data-page="alerts">
+                            <i class="fas fa-bell"></i>
+                            <span>Price Alerts</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#academy" class="menu-link" data-page="academy">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Trading Academy</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name" id="userName">Loading...</span>
+                    <span class="user-status">Pro Trader</span>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="page-title">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <span class="page-subtitle">Welcome back to your trading hub</span>
+                </div>
+            </div>
+            
+            <div class="header-center">
+                <div class="market-ticker">
+                    <div class="ticker-item">
+                        <span class="ticker-symbol">BTC/USD</span>
+                        <span class="ticker-price" id="btcPrice">$67,234.50</span>
+                        <span class="ticker-change positive" id="btcChange">+2.34%</span>
+                    </div>
+                    <div class="ticker-item">
+                        <span class="ticker-symbol">ETH/USD</span>
+                        <span class="ticker-price" id="ethPrice">$3,456.78</span>
+                        <span class="ticker-change positive" id="ethChange">+1.67%</span>
+                    </div>
+                    <div class="ticker-item">
+                        <span class="ticker-symbol">ADA/USD</span>
+                        <span class="ticker-price" id="adaPrice">$0.89</span>
+                        <span class="ticker-change negative" id="adaChange">-0.45%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Portfolio</span>
+                        <span class="stat-value" id="portfolioValue">$127,450.89</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">24h P&L</span>
+                        <span class="stat-value positive" id="dailyPnl">+$5,234.67</span>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="header-btn" id="paymentBtn" title="Payment & Wallet Management">
+                        <i class="fas fa-credit-card"></i>
+                    </button>
+                    <button class="header-btn" id="riskBtn" title="Risk Management & Compliance">
+                        <i class="fas fa-shield-alt"></i>
+                    </button>
+                    <button class="header-btn" id="notificationsBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="header-btn" id="settingsBtn">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content Container -->
+        <div class="page-content" id="pageContent">
+            <!-- Dashboard Page (Default) -->
+            <div class="page-section active" id="dashboard-page">
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-title">Total Balance</h3>
+                            <p class="stat-value">$127,450.89</p>
+                            <p class="stat-change positive">+4.28% (24h)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-title">Active Positions</h3>
+                            <p class="stat-value">8</p>
+                            <p class="stat-change positive">+2 new</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-title">Active Bots</h3>
+                            <p class="stat-value">3</p>
+                            <p class="stat-change neutral">Running</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-title">Staking Rewards</h3>
+                            <p class="stat-value">$1,234.56</p>
+                            <p class="stat-change positive">+12.5% APY</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Portfolio Overview -->
+                    <div class="dashboard-card portfolio-overview">
+                        <div class="card-header">
+                            <h3 class="card-title">Portfolio Overview</h3>
+                            <div class="card-actions">
+                                <select class="card-select">
+                                    <option>7 Days</option>
+                                    <option>30 Days</option>
+                                    <option>90 Days</option>
+                                    <option>1 Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="portfolio-chart-container">
+                                <canvas id="portfolioChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Asset Allocation -->
+                    <div class="dashboard-card asset-allocation">
+                        <div class="card-header">
+                            <h3 class="card-title">Asset Allocation</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="allocation-chart-container">
+                                <canvas id="allocationChart"></canvas>
+                            </div>
+                            <div class="allocation-legend">
+                                <div class="legend-item">
+                                    <span class="color-dot btc"></span>
+                                    <span class="legend-label">Bitcoin</span>
+                                    <span class="legend-value">45.2%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="color-dot eth"></span>
+                                    <span class="legend-label">Ethereum</span>
+                                    <span class="legend-value">32.8%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="color-dot ada"></span>
+                                    <span class="legend-label">Cardano</span>
+                                    <span class="legend-value">12.1%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="color-dot others"></span>
+                                    <span class="legend-label">Others</span>
+                                    <span class="legend-value">9.9%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Market Overview -->
+                    <div class="dashboard-card market-overview">
+                        <div class="card-header">
+                            <h3 class="card-title">Market Overview</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-outline btn-small">
+                                    <i class="fas fa-plus"></i>
+                                    Add to Watchlist
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="market-list">
+                                <div class="market-item">
+                                    <div class="market-info">
+                                        <div class="market-icon btc">₿</div>
+                                        <div class="market-details">
+                                            <span class="market-name">Bitcoin</span>
+                                            <span class="market-symbol">BTC/USD</span>
+                                        </div>
+                                    </div>
+                                    <div class="market-price">
+                                        <span class="price">$67,234.50</span>
+                                        <span class="change positive">+2.34%</span>
+                                    </div>
+                                    <div class="market-chart">
+                                        <canvas class="mini-chart" data-symbol="BTC"></canvas>
+                                    </div>
+                                </div>
+                                
+                                <div class="market-item">
+                                    <div class="market-info">
+                                        <div class="market-icon eth">Ξ</div>
+                                        <div class="market-details">
+                                            <span class="market-name">Ethereum</span>
+                                            <span class="market-symbol">ETH/USD</span>
+                                        </div>
+                                    </div>
+                                    <div class="market-price">
+                                        <span class="price">$3,456.78</span>
+                                        <span class="change positive">+1.67%</span>
+                                    </div>
+                                    <div class="market-chart">
+                                        <canvas class="mini-chart" data-symbol="ETH"></canvas>
+                                    </div>
+                                </div>
+                                
+                                <div class="market-item">
+                                    <div class="market-info">
+                                        <div class="market-icon ada">₳</div>
+                                        <div class="market-details">
+                                            <span class="market-name">Cardano</span>
+                                            <span class="market-symbol">ADA/USD</span>
+                                        </div>
+                                    </div>
+                                    <div class="market-price">
+                                        <span class="price">$0.89</span>
+                                        <span class="change negative">-0.45%</span>
+                                    </div>
+                                    <div class="market-chart">
+                                        <canvas class="mini-chart" data-symbol="ADA"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="dashboard-card recent-transactions">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Transactions</h3>
+                            <a href="#" class="card-link">View All</a>
+                        </div>
+                        <div class="card-content">
+                            <div class="transaction-list">
+                                <div class="transaction-item">
+                                    <div class="transaction-icon buy">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </div>
+                                    <div class="transaction-details">
+                                        <span class="transaction-type">Buy BTC</span>
+                                        <span class="transaction-time">2 hours ago</span>
+                                    </div>
+                                    <div class="transaction-amount">
+                                        <span class="amount">0.1567 BTC</span>
+                                        <span class="value">$10,534.23</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="transaction-item">
+                                    <div class="transaction-icon sell">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </div>
+                                    <div class="transaction-details">
+                                        <span class="transaction-type">Sell ETH</span>
+                                        <span class="transaction-time">5 hours ago</span>
+                                    </div>
+                                    <div class="transaction-amount">
+                                        <span class="amount">2.456 ETH</span>
+                                        <span class="value">$8,489.67</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="transaction-item">
+                                    <div class="transaction-icon stake">
+                                        <i class="fas fa-coins"></i>
+                                    </div>
+                                    <div class="transaction-details">
+                                        <span class="transaction-type">Stake ADA</span>
+                                        <span class="transaction-time">1 day ago</span>
+                                    </div>
+                                    <div class="transaction-amount">
+                                        <span class="amount">1,000 ADA</span>
+                                        <span class="value">$890.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Alerts -->
+                    <div class="dashboard-card active-alerts">
+                        <div class="card-header">
+                            <h3 class="card-title">Active Alerts</h3>
+                            <button class="btn btn-outline btn-small">
+                                <i class="fas fa-plus"></i>
+                                New Alert
+                            </button>
+                        </div>
+                        <div class="card-content">
+                            <div class="alert-list">
+                                <div class="alert-item">
+                                    <div class="alert-info">
+                                        <span class="alert-symbol">BTC/USD</span>
+                                        <span class="alert-condition">Above $70,000</span>
+                                    </div>
+                                    <div class="alert-status active">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert-item">
+                                    <div class="alert-info">
+                                        <span class="alert-symbol">ETH/USD</span>
+                                        <span class="alert-condition">Below $3,200</span>
+                                    </div>
+                                    <div class="alert-status active">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional pages will be added dynamically -->
+        </div>
+    </main>
+
+    <!-- Notification Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Payment Management Modal -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2><i class="fas fa-credit-card"></i> Payment & Wallet Management</h2>
+                <button class="modal-close" data-modal="paymentModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-content">
+                <div class="modal-tabs">
+                    <button class="modal-tab active" data-modal="payment" data-tab="methods">Payment Methods</button>
+                    <button class="modal-tab" data-modal="payment" data-tab="deposit">Deposit</button>
+                    <button class="modal-tab" data-modal="payment" data-tab="withdraw">Withdraw</button>
+                    <button class="modal-tab" data-modal="payment" data-tab="history">History</button>
+                </div>
+                
+                <!-- Payment Methods Tab -->
+                <div class="modal-tab-content active" id="payment-methods">
+                    <div class="tab-section">
+                        <h3>Your Payment Methods</h3>
+                        <div id="paymentMethodsList" class="payment-methods-list">
+                            <div class="loading-placeholder">Loading payment methods...</div>
+                        </div>
+                        <button class="btn-primary" data-action="show-add-payment">
+                            <i class="fas fa-plus"></i> Add Payment Method
+                        </button>
+                    </div>
+                    
+                    <div class="tab-section hidden" id="addPaymentForm">
+                        <h3>Add New Payment Method</h3>
+                        <form id="newPaymentForm">
+                            <div class="form-group">
+                                <label>Payment Type</label>
+                                <select id="paymentType">
+                                    <option value="credit_card">Credit Card</option>
+                                    <option value="debit_card">Debit Card</option>
+                                    <option value="bank_account">Bank Account</option>
+                                </select>
+                            </div>
+                            
+                            <div id="cardFields">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Card Number</label>
+                                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Expiry Month</label>
+                                        <select id="expiryMonth">
+                                            <option value="">Month</option>
+                                            <option value="01">01</option>
+                                            <option value="02">02</option>
+                                            <option value="03">03</option>
+                                            <option value="04">04</option>
+                                            <option value="05">05</option>
+                                            <option value="06">06</option>
+                                            <option value="07">07</option>
+                                            <option value="08">08</option>
+                                            <option value="09">09</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Expiry Year</label>
+                                        <select id="expiryYear">
+                                            <option value="">Year</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2025">2025</option>
+                                            <option value="2026">2026</option>
+                                            <option value="2027">2027</option>
+                                            <option value="2028">2028</option>
+                                            <option value="2029">2029</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>CVV</label>
+                                        <input type="text" id="cvv" placeholder="123" maxlength="4">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="bankFields" class="hidden">
+                                <div class="form-group">
+                                    <label>Bank Name</label>
+                                    <input type="text" id="bankName" placeholder="Bank of America">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Account Number</label>
+                                        <input type="text" id="accountNumber" placeholder="123456789">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Routing Number</label>
+                                        <input type="text" id="routingNumber" placeholder="021000021">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" data-action="hide-add-payment">Cancel</button>
+                                <button type="submit" class="btn-primary">Add Payment Method</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Deposit Tab -->
+                <div class="modal-tab-content" id="payment-deposit">
+                    <div class="tab-section">
+                        <h3>Deposit Funds</h3>
+                        <form id="depositForm">
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select id="depositPaymentMethod">
+                                    <option value="">Select payment method...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (USD)</label>
+                                <input type="number" id="depositAmount" placeholder="100.00" step="0.01" min="10">
+                            </div>
+                            <div class="deposit-info">
+                                <div class="info-item">
+                                    <span>Processing Time:</span>
+                                    <span>Instant - 5 minutes</span>
+                                </div>
+                                <div class="info-item">
+                                    <span>Fee:</span>
+                                    <span id="depositFee">$2.99</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-download"></i> Deposit Funds
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Withdraw Tab -->
+                <div class="modal-tab-content" id="payment-withdraw">
+                    <div class="tab-section">
+                        <h3>Withdraw Funds</h3>
+                        <form id="withdrawForm">
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select id="withdrawPaymentMethod">
+                                    <option value="">Select payment method...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (USD)</label>
+                                <input type="number" id="withdrawAmount" placeholder="50.00" step="0.01" min="10">
+                            </div>
+                            <div class="withdraw-info">
+                                <div class="info-item">
+                                    <span>Processing Time:</span>
+                                    <span>1-3 business days</span>
+                                </div>
+                                <div class="info-item">
+                                    <span>Fee:</span>
+                                    <span id="withdrawFee">$5.00</span>
+                                </div>
+                                <div class="info-item">
+                                    <span>Available Balance:</span>
+                                    <span id="availableBalance">$127,450.89</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-upload"></i> Withdraw Funds
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- History Tab -->
+                <div class="modal-tab-content" id="payment-history">
+                    <div class="tab-section">
+                        <h3>Transaction History</h3>
+                        <div class="transaction-filters">
+                            <select id="transactionFilter">
+                                <option value="all">All Transactions</option>
+                                <option value="deposits">Deposits</option>
+                                <option value="withdrawals">Withdrawals</option>
+                            </select>
+                            <input type="date" id="dateFrom">
+                            <input type="date" id="dateTo">
+                        </div>
+                        <div id="transactionsList" class="transactions-list">
+                            <div class="loading-placeholder">Loading transactions...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Management Modal -->
+    <div class="modal-overlay" id="riskModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2><i class="fas fa-shield-alt"></i> Risk Management & Compliance</h2>
+                <button class="modal-close" data-modal="riskModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-content">
+                <div class="modal-tabs">
+                    <button class="modal-tab active" data-modal="risk" data-tab="profile">Risk Profile</button>
+                    <button class="modal-tab" data-modal="risk" data-tab="limits">Trading Limits</button>
+                    <button class="modal-tab" data-modal="risk" data-tab="compliance">Compliance</button>
+                    <button class="modal-tab" data-modal="risk" data-tab="alerts">Security Alerts</button>
+                </div>
+                
+                <!-- Risk Profile Tab -->
+                <div class="modal-tab-content active" id="risk-profile">
+                    <div class="tab-section">
+                        <h3>Your Risk Assessment</h3>
+                        <div class="risk-overview">
+                            <div class="risk-score">
+                                <div class="score-circle">
+                                    <div class="score-value" id="riskScoreValue">45</div>
+                                    <div class="score-label">Risk Score</div>
+                                </div>
+                                <div class="risk-level" id="riskLevelBadge">
+                                    <span class="risk-badge medium">MEDIUM RISK</span>
+                                </div>
+                            </div>
+                            
+                            <div class="risk-factors">
+                                <h4>Risk Factors</h4>
+                                <div class="factor-item">
+                                    <span>Trading Experience</span>
+                                    <span class="factor-score good">Low Risk</span>
+                                </div>
+                                <div class="factor-item">
+                                    <span>Account Verification</span>
+                                    <span class="factor-score good">Verified</span>
+                                </div>
+                                <div class="factor-item">
+                                    <span>Trading Volume</span>
+                                    <span class="factor-score medium">Medium Risk</span>
+                                </div>
+                                <div class="factor-item">
+                                    <span>Geographic Risk</span>
+                                    <span class="factor-score good">Low Risk</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Trading Limits Tab -->
+                <div class="modal-tab-content" id="risk-limits">
+                    <div class="tab-section">
+                        <h3>Current Trading Limits</h3>
+                        <div id="limitsContainer" class="limits-container">
+                            <div class="loading-placeholder">Loading limits...</div>
+                        </div>
+                        <button class="btn-secondary" data-action="request-limit-increase">
+                            <i class="fas fa-arrow-up"></i> Request Limit Increase
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Compliance Tab -->
+                <div class="modal-tab-content" id="risk-compliance">
+                    <div class="tab-section">
+                        <h3>Compliance Status</h3>
+                        <div id="complianceContainer" class="compliance-container">
+                            <div class="loading-placeholder">Loading compliance status...</div>
+                        </div>
+                        <button class="btn-primary" data-action="start-kyc">
+                            <i class="fas fa-id-card"></i> Complete KYC Verification
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Security Alerts Tab -->
+                <div class="modal-tab-content" id="risk-alerts">
+                    <div class="tab-section">
+                        <h3>Security Alerts</h3>
+                        <div id="alertsContainer" class="alerts-container">
+                            <div class="loading-placeholder">Loading security alerts...</div>
+                        </div>
+                        <button class="btn-secondary" data-action="load-security-alerts">
+                            <i class="fas fa-refresh"></i> Refresh Alerts
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Firebase config disabled - using backend authentication -->
+    <!-- <script src="firebase-config.js"></script> -->
+    <script src="stripe-config.js"></script>
+    <script src="font-awesome-fallback.js"></script>
+    <script src="dashboard-script.js"></script>
+</body>
+</html>

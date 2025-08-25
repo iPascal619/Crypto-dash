@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoDash - Advanced Digital Asset Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Professional cryptocurrency platform with advanced trading features, portfolio management, and DeFi integration.">
+    <meta name="keywords" content="cryptocurrency, trading, portfolio, DeFi, blockchain, digital assets">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>₿</text></svg>">
+    
+    <!-- External Libraries for Charts and API -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo">
+                    <i class="fab fa-bitcoin"></i>
+                    <span>CryptoDash</span>
+                </div>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#home" class="nav-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#features" class="nav-link">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#trading" class="nav-link">Trading</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#portfolio" class="nav-link">Portfolio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#analytics" class="nav-link">Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#contact" class="nav-link">Contact</a>
+                    </li>
+                </ul>
+                
+                <div class="nav-actions">
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <a href="login.html" class="btn btn-outline">Sign In</a>
+                    <a href="login.html" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+            
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="grid-overlay"></div>
+            <div class="floating-elements">
+                <div class="floating-element" style="--delay: 0s;"></div>
+                <div class="floating-element" style="--delay: 2s;"></div>
+                <div class="floating-element" style="--delay: 4s;"></div>
+                <div class="floating-element" style="--delay: 6s;"></div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        <span class="gradient-text">Next-Generation</span><br>
+                        Cryptocurrency Platform
+                    </h1>
+                    <p class="hero-description">
+                        Experience professional-grade trading with advanced analytics, 
+                        portfolio management, and seamless DeFi integration. Built for 
+                        traders who demand excellence.
+                    </p>
+                    
+                    <div class="hero-actions">
+                        <a href="auth.html" class="btn btn-primary btn-large">
+                            <i class="fas fa-user-plus"></i>
+                            Get Started
+                        </a>
+                        <button class="btn btn-outline btn-large">
+                            <i class="fas fa-play"></i>
+                            Watch Demo
+                        </button>
+                    </div>
+                    
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-number" data-target="2.5">0</div>
+                            <div class="stat-label">Billion+ Volume</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number" data-target="150">0</div>
+                            <div class="stat-label">Countries</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number" data-target="10">0</div>
+                            <div class="stat-label">Million+ Users</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="dashboard-preview">
+                        <div class="preview-header">
+                            <div class="preview-controls">
+                                <span class="control red"></span>
+                                <span class="control yellow"></span>
+                                <span class="control green"></span>
+                            </div>
+                            <div class="preview-title">CryptoDash Pro</div>
+                        </div>
+                        
+                        <div class="preview-content">
+                            <div class="chart-container">
+                                <canvas id="heroChart" width="400" height="200"></canvas>
+                            </div>
+                            
+                            <div class="trading-panel">
+                                <div class="price-ticker">
+                                    <div class="ticker-item">
+                                        <span class="symbol">BTC/USD</span>
+                                        <span class="price positive">$67,234.50</span>
+                                        <span class="change">+2.34%</span>
+                                    </div>
+                                    <div class="ticker-item">
+                                        <span class="symbol">ETH/USD</span>
+                                        <span class="price positive">$3,456.78</span>
+                                        <span class="change">+1.67%</span>
+                                    </div>
+                                    <div class="ticker-item">
+                                        <span class="symbol">ADA/USD</span>
+                                        <span class="price negative">$0.4567</span>
+                                        <span class="change">-0.89%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features animate-on-scroll">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Advanced Trading Features</h2>
+                <p class="section-subtitle">
+                    Professional-grade tools designed for serious traders and institutions
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card stagger-item data-loading">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Advanced Analytics</h3>
+                    <p class="feature-description">
+                        Real-time market data, technical indicators, and AI-powered insights 
+                        to make informed trading decisions.
+                    </p>
+                    <ul class="feature-list">
+                        <li>50+ Technical Indicators</li>
+                        <li>AI Market Predictions</li>
+                        <li>Custom Dashboard Builder</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card stagger-item data-loading">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Enterprise Security</h3>
+                    <p class="feature-description">
+                        Bank-grade security with multi-signature wallets, cold storage, 
+                        and advanced encryption protocols.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Multi-Signature Wallets</li>
+                        <li>Cold Storage Integration</li>
+                        <li>2FA & Biometric Auth</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card stagger-item data-loading">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="feature-title">Automated Trading</h3>
+                    <p class="feature-description">
+                        Create sophisticated trading bots with our visual strategy builder 
+                        and backtesting engine.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Visual Strategy Builder</li>
+                        <li>Historical Backtesting</li>
+                        <li>Risk Management Tools</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card stagger-item data-loading">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 class="feature-title">DeFi Integration</h3>
+                    <p class="feature-description">
+                        Seamlessly access decentralized finance protocols, yield farming, 
+                        and liquidity mining opportunities.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Yield Farming Optimizer</li>
+                        <li>Liquidity Pool Management</li>
+                        <li>Cross-Chain Bridging</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card stagger-item data-loading">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Mobile Trading</h3>
+                    <p class="feature-description">
+                        Full-featured mobile app with push notifications, biometric login, 
+                        and offline portfolio tracking.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Native iOS & Android Apps</li>
+                        <li>Real-time Push Notifications</li>
+                        <li>Offline Portfolio Sync</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card stagger-item data-loading">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="feature-title">Trading Academy</h3>
+                    <p class="feature-description">
+                        Comprehensive educational resources, webinars, and certification 
+                        programs for all skill levels.
+                    </p>
+                    <ul class="feature-list">
+                        <li>Interactive Courses</li>
+                        <li>Live Webinars</li>
+                        <li>Trading Certifications</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trading Section -->
+    <section id="trading" class="trading">
+        <div class="container">
+            <div class="trading-content">
+                <div class="trading-info">
+                    <h2 class="section-title">Professional Trading Interface</h2>
+                    <p class="section-subtitle">
+                        Experience lightning-fast execution with our advanced trading engine
+                    </p>
+                    
+                    <div class="trading-features">
+                        <div class="trading-feature">
+                            <div class="feature-icon-small">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Ultra-Low Latency</h4>
+                                <p>Execute trades in under 10ms with our optimized infrastructure</p>
+                            </div>
+                        </div>
+                        
+                        <div class="trading-feature">
+                            <div class="feature-icon-small">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Deep Liquidity</h4>
+                                <p>Access liquidity from 50+ exchanges and market makers</p>
+                            </div>
+                        </div>
+                        
+                        <div class="trading-feature">
+                            <div class="feature-icon-small">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Advanced Orders</h4>
+                                <p>Stop-loss, take-profit, OCO, and algorithmic order types</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-large">
+                        <i class="fas fa-chart-area"></i>
+                        Open Trading Terminal
+                    </button>
+                </div>
+                
+                <div class="trading-visual">
+                    <div class="trading-terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-tabs">
+                                <span class="tab active">BTC/USD</span>
+                                <span class="tab">ETH/USD</span>
+                                <span class="tab">ADA/USD</span>
+                            </div>
+                            <div class="terminal-controls">
+                                <i class="fas fa-expand"></i>
+                                <i class="fas fa-cog"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="terminal-content">
+                            <div class="price-display">
+                                <div class="current-price">
+                                    <span class="price-value">$67,234.50</span>
+                                    <span class="price-change positive">+$1,234.50 (+1.87%)</span>
+                                </div>
+                                <div class="price-details">
+                                    <span>24h High: $68,456.78</span>
+                                    <span>24h Low: $65,123.45</span>
+                                    <span>Volume: 45,678 BTC</span>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-placeholder">
+                                <canvas id="tradingChart" width="500" height="300"></canvas>
+                            </div>
+                            
+                            <div class="order-book-preview">
+                                <div class="order-column">
+                                    <h5>Bids</h5>
+                                    <div class="order-row">
+                                        <span class="price">67,230.50</span>
+                                        <span class="amount">2.45</span>
+                                    </div>
+                                    <div class="order-row">
+                                        <span class="price">67,225.00</span>
+                                        <span class="amount">1.78</span>
+                                    </div>
+                                    <div class="order-row">
+                                        <span class="price">67,220.25</span>
+                                        <span class="amount">3.21</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="order-column">
+                                    <h5>Asks</h5>
+                                    <div class="order-row">
+                                        <span class="price">67,240.00</span>
+                                        <span class="amount">1.89</span>
+                                    </div>
+                                    <div class="order-row">
+                                        <span class="price">67,245.50</span>
+                                        <span class="amount">2.67</span>
+                                    </div>
+                                    <div class="order-row">
+                                        <span class="price">67,250.75</span>
+                                        <span class="amount">1.45</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Portfolio Management</h2>
+                <p class="section-subtitle">
+                    Track, analyze, and optimize your cryptocurrency investments with advanced portfolio tools
+                </p>
+            </div>
+            
+            <div class="portfolio-demo">
+                <div class="portfolio-sidebar">
+                    <div class="portfolio-summary">
+                        <h3>Total Portfolio Value</h3>
+                        <div class="portfolio-value">
+                            <span class="value">$127,450.89</span>
+                            <span class="change positive">+$5,234.67 (+4.28%)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="asset-allocation">
+                        <h4>Asset Allocation</h4>
+                        <div class="allocation-chart">
+                            <canvas id="allocationChart" width="200" height="200"></canvas>
+                        </div>
+                        <div class="allocation-legend">
+                            <div class="legend-item">
+                                <span class="color-dot" style="background: #f7931a;"></span>
+                                <span>Bitcoin (45%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="color-dot" style="background: #627eea;"></span>
+                                <span>Ethereum (30%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="color-dot" style="background: #00d4aa;"></span>
+                                <span>Others (25%)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="portfolio-main">
+                    <div class="portfolio-header">
+                        <h4>Holdings</h4>
+                        <div class="portfolio-controls">
+                            <select class="control-select">
+                                <option>All Assets</option>
+                                <option>Favorites</option>
+                                <option>Gainers</option>
+                                <option>Losers</option>
+                            </select>
+                            <button class="btn btn-outline btn-small">Export</button>
+                        </div>
+                    </div>
+                    
+                    <div class="holdings-table">
+                        <div class="table-header">
+                            <span>Asset</span>
+                            <span>Holdings</span>
+                            <span>Price</span>
+                            <span>24h Change</span>
+                            <span>Value</span>
+                            <span>Actions</span>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="asset-info">
+                                <div class="asset-icon">₿</div>
+                                <div class="asset-details">
+                                    <span class="asset-name">Bitcoin</span>
+                                    <span class="asset-symbol">BTC</span>
+                                </div>
+                            </div>
+                            <span class="holdings">0.8456 BTC</span>
+                            <span class="price">$67,234.50</span>
+                            <span class="change positive">+2.34%</span>
+                            <span class="value">$56,856.78</span>
+                            <div class="actions">
+                                <button class="btn-icon">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button class="btn-icon">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="asset-info">
+                                <div class="asset-icon">Ξ</div>
+                                <div class="asset-details">
+                                    <span class="asset-name">Ethereum</span>
+                                    <span class="asset-symbol">ETH</span>
+                                </div>
+                            </div>
+                            <span class="holdings">12.345 ETH</span>
+                            <span class="price">$3,456.78</span>
+                            <span class="change positive">+1.67%</span>
+                            <span class="value">$42,678.90</span>
+                            <div class="actions">
+                                <button class="btn-icon">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button class="btn-icon">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-row">
+                            <div class="asset-info">
+                                <div class="asset-icon">₳</div>
+                                <div class="asset-details">
+                                    <span class="asset-name">Cardano</span>
+                                    <span class="asset-symbol">ADA</span>
+                                </div>
+                            </div>
+                            <span class="holdings">15,678 ADA</span>
+                            <span class="price">$0.4567</span>
+                            <span class="change negative">-0.89%</span>
+                            <span class="value">$7,159.21</span>
+                            <div class="actions">
+                                <button class="btn-icon">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button class="btn-icon">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analytics Section -->
+    <section id="analytics" class="analytics">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Advanced Analytics</h2>
+                <p class="section-subtitle">
+                    Make data-driven decisions with our comprehensive market analysis tools
+                </p>
+            </div>
+            
+            <div class="analytics-grid">
+                <div class="analytics-card large">
+                    <div class="card-header">
+                        <h3>Market Overview</h3>
+                        <div class="card-controls">
+                            <select class="control-select">
+                                <option>24H</option>
+                                <option>7D</option>
+                                <option>30D</option>
+                                <option>1Y</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="market-metrics">
+                        <div class="metric">
+                            <span class="metric-label">Market Cap</span>
+                            <span class="metric-value">$2.1T</span>
+                            <span class="metric-change positive">+2.4%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">24h Volume</span>
+                            <span class="metric-value">$89.5B</span>
+                            <span class="metric-change positive">+12.8%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">BTC Dominance</span>
+                            <span class="metric-value">42.3%</span>
+                            <span class="metric-change negative">-0.8%</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Fear & Greed</span>
+                            <span class="metric-value">74</span>
+                            <span class="metric-label">Greed</span>
+                        </div>
+                    </div>
+                    <div class="market-chart">
+                        <canvas id="marketChart" width="600" height="250"></canvas>
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3>Top Gainers</h3>
+                    </div>
+                    <div class="gainers-list">
+                        <div class="gainer-item">
+                            <div class="gainer-info">
+                                <span class="symbol">AVAX</span>
+                                <span class="name">Avalanche</span>
+                            </div>
+                            <div class="gainer-metrics">
+                                <span class="price">$42.56</span>
+                                <span class="change positive">+15.67%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="gainer-item">
+                            <div class="gainer-info">
+                                <span class="symbol">SOL</span>
+                                <span class="name">Solana</span>
+                            </div>
+                            <div class="gainer-metrics">
+                                <span class="price">$189.34</span>
+                                <span class="change positive">+12.43%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="gainer-item">
+                            <div class="gainer-info">
+                                <span class="symbol">MATIC</span>
+                                <span class="name">Polygon</span>
+                            </div>
+                            <div class="gainer-metrics">
+                                <span class="price">$1.23</span>
+                                <span class="change positive">+9.87%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="gainer-item">
+                            <div class="gainer-info">
+                                <span class="symbol">NEAR</span>
+                                <span class="name">NEAR Protocol</span>
+                            </div>
+                            <div class="gainer-metrics">
+                                <span class="price">$8.92</span>
+                                <span class="change positive">+8.21%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="gainer-item">
+                            <div class="gainer-info">
+                                <span class="symbol">DOT</span>
+                                <span class="name">Polkadot</span>
+                            </div>
+                            <div class="gainer-metrics">
+                                <span class="price">$7.84</span>
+                                <span class="change positive">+7.95%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="gainer-item">
+                            <div class="gainer-info">
+                                <span class="symbol">ATOM</span>
+                                <span class="name">Cosmos</span>
+                            </div>
+                            <div class="gainer-metrics">
+                                <span class="price">$12.67</span>
+                                <span class="change positive">+6.78%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="gainer-item">
+                            <div class="gainer-info">
+                                <span class="symbol">FTM</span>
+                                <span class="name">Fantom</span>
+                            </div>
+                            <div class="gainer-metrics">
+                                <span class="price">$0.89</span>
+                                <span class="change positive">+5.43%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="gainer-item">
+                            <div class="gainer-info">
+                                <span class="symbol">ALGO</span>
+                                <span class="name">Algorand</span>
+                            </div>
+                            <div class="gainer-metrics">
+                                <span class="price">$0.34</span>
+                                <span class="change positive">+4.89%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3>AI Insights</h3>
+                    </div>
+                    <div class="insights-content">
+                        <div class="insight-item">
+                            <div class="insight-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="insight-text">
+                                <h4>Bullish Signal Detected</h4>
+                                <p>BTC showing strong accumulation patterns. 78% confidence level.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="insight-item">
+                            <div class="insight-icon">
+                                <i class="fas fa-chart-area"></i>
+                            </div>
+                            <div class="insight-text">
+                                <h4>Support Level Alert</h4>
+                                <p>ETH approaching key support at $3,200. Monitor for bounce.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="insight-item">
+                            <div class="insight-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="insight-text">
+                                <h4>Risk Warning</h4>
+                                <p>High volatility expected in altcoin sector. Consider position sizing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h2 class="section-title">Ready to Start Trading?</h2>
+                    <p class="section-subtitle">
+                        Join millions of traders who trust CryptoDash for their digital asset investments
+                    </p>
+                    
+                    <div class="contact-features">
+                        <div class="contact-feature">
+                            <i class="fas fa-headset"></i>
+                            <div>
+                                <h4>24/7 Support</h4>
+                                <p>Get help whenever you need it from our expert support team</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-feature">
+                            <i class="fas fa-graduation-cap"></i>
+                            <div>
+                                <h4>Free Education</h4>
+                                <p>Access our comprehensive trading academy and resources</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                <h4>Secure & Regulated</h4>
+                                <p>Trade with confidence on our regulated and insured platform</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-actions">
+                        <button class="btn btn-primary btn-large">
+                            <i class="fas fa-user-plus"></i>
+                            Create Free Account
+                        </button>
+                        <button class="btn btn-outline btn-large">
+                            <i class="fas fa-phone"></i>
+                            Schedule Demo
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="contact-form-container">
+                    <div class="contact-form">
+                        <h3>Get Started Today</h3>
+                        <form class="form">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="experience">Trading Experience</label>
+                                <select id="experience" name="experience" required>
+                                    <option value="">Select your level</option>
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                    <option value="professional">Professional</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message">Message (Optional)</label>
+                                <textarea id="message" name="message" rows="4" placeholder="Tell us about your trading goals..."></textarea>
+                            </div>
+                            
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="newsletter" name="newsletter">
+                                    <span class="checkmark"></span>
+                                    Subscribe to our market insights newsletter
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-rocket"></i>
+                                Start Trading Journey
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <i class="fab fa-bitcoin"></i>
+                            <span>CryptoDash</span>
+                        </div>
+                        <p class="brand-description">
+                            The world's leading cryptocurrency platform for professional traders and institutions.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Platform</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Trading</a></li>
+                        <li><a href="#">Portfolio</a></li>
+                        <li><a href="#">Analytics</a></li>
+                        <li><a href="#">Mobile App</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Institutional</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Trading Academy</a></li>
+                        <li><a href="#">Market Research</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Status Page</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Partners</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Compliance</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Risk Disclosure</a></li>
+                        <li><a href="#">Regulatory</a></li>
+                        <li><a href="#">Licenses</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p>&copy; 2025 PuzzleLabs Inc. All rights reserved.</p>
+                    <div class="footer-certifications">
+                        <span class="certification">
+                            <i class="fas fa-shield-alt"></i>
+                            SOC 2 Certified
+                        </span>
+                        <span class="certification">
+                            <i class="fas fa-lock"></i>
+                            ISO 27001
+                        </span>
+                        <span class="certification">
+                            <i class="fas fa-university"></i>
+                            FDIC Insured
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
