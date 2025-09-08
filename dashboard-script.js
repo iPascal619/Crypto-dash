@@ -28,7 +28,8 @@ class CryptoDashboard {
             throw new Error('No authentication token');
         }
         
-        const baseURL = 'http://localhost:3001';
+        // Use current protocol and host for production, fallback to localhost for development
+        const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
         const fullURL = endpoint.startsWith('http') ? endpoint : baseURL + endpoint;
         
         const headers = {
@@ -95,7 +96,7 @@ class CryptoDashboard {
             this.updateLoadingStep(0, 'Authentication failed. Redirecting...');
             // Authentication failed, redirect to login
             setTimeout(() => {
-                window.location.href = 'http://localhost:3001/login.html';
+                window.location.href = window.location.hostname === 'localhost' ? 'http://localhost:3001/login.html' : '/login.html';
             }, 2000);
         }
     }
@@ -381,7 +382,7 @@ class CryptoDashboard {
             localStorage.removeItem('cryptodash_token');
             setTimeout(() => {
                 console.log('🔄 Redirecting to login...');
-                window.location.href = 'http://localhost:3001/login.html';
+                window.location.href = window.location.hostname === 'localhost' ? 'http://localhost:3001/login.html' : '/login.html';
             }, 2000);
             throw error;
         }
@@ -1340,7 +1341,7 @@ class CryptoDashboard {
             this.showToast('Logged out successfully', 'success');
             
             setTimeout(() => {
-                window.location.href = 'http://localhost:3001/login.html';
+                window.location.href = window.location.hostname === 'localhost' ? 'http://localhost:3001/login.html' : '/login.html';
             }, 1000);
             
         } catch (error) {
@@ -1348,7 +1349,7 @@ class CryptoDashboard {
             // Force logout even on error
             localStorage.removeItem('cryptodash_token');
             this.showToast('Logged out', 'info');
-            window.location.href = 'http://localhost:3001/login.html';
+            window.location.href = window.location.hostname === 'localhost' ? 'http://localhost:3001/login.html' : '/login.html';
         }
     }
 
@@ -1566,7 +1567,7 @@ class CryptoDashboard {
 
 class ModalManager {
     constructor() {
-        this.API_BASE = 'http://localhost:3001/api';
+        this.API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : '/api';
         this.init();
     }
 

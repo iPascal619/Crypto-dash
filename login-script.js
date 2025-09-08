@@ -109,11 +109,13 @@ class CryptoDashAuth {
         // Social authentication
             this.googleSignIn?.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = 'http://localhost:3001/api/auth/google/login';
+                const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
+                window.location.href = `${baseUrl}/api/auth/google/login`;
             });
             this.googleSignUp?.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = 'http://localhost:3001/api/auth/google/login';
+                const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
+                window.location.href = `${baseUrl}/api/auth/google/login`;
             });
         this.microsoftSignIn?.addEventListener('click', () => this.handleSocialAuth('microsoft', 'signIn'));
         this.microsoftSignUp?.addEventListener('click', () => this.handleSocialAuth('microsoft', 'signUp'));
@@ -234,7 +236,8 @@ class CryptoDashAuth {
 
         try {
             console.log('🔍 Attempting sign in with backend API:', email);
-            const response = await fetch('http://localhost:3001/api/auth/login', {
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
+            const response = await fetch(`${baseUrl}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -309,7 +312,8 @@ class CryptoDashAuth {
         try {
             // Create user account via backend API
             console.log('🔍 Attempting registration with backend API:', email);
-            const response = await fetch('http://localhost:3001/api/auth/register', {
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
+            const response = await fetch(`${baseUrl}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -753,13 +757,15 @@ class CryptoDashAuth {
             
             // Small delay to ensure everything is saved
             setTimeout(() => {
-                window.location.href = 'http://localhost:3001/dashboard.html';
+                const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
+                window.location.href = `${baseUrl}/dashboard.html`;
             }, 500);
             
         } catch (error) {
             console.error('Error preparing redirect:', error);
             // Redirect anyway - dashboard will handle auth check
-            window.location.href = 'http://localhost:3001/dashboard.html';
+            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : window.location.origin;
+            window.location.href = `${baseUrl}/dashboard.html`;
         }
     }
 }
