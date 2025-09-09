@@ -78,7 +78,21 @@ app.get('/api/env-test', (req, res) => {
         hasGoogleClientId: !!process.env.GOOGLE_CLIENT_ID,
         hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
         hasJwtSecret: !!process.env.JWT_SECRET,
-        mongoStatus: 'Skipped for testing'
+        mongoStatus: 'Skipped for testing',
+        googleClientIdLength: process.env.GOOGLE_CLIENT_ID?.length || 0,
+        callbackUrl: process.env.NODE_ENV === 'production' 
+            ? 'https://cryptodash.tech/api/auth/google/callback'
+            : 'http://localhost:3001/api/auth/google/callback'
+    });
+});
+
+// Debug endpoint to check OAuth errors
+app.get('/api/debug-oauth', (req, res) => {
+    res.json({
+        query: req.query,
+        session: req.session,
+        user: req.user,
+        isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false
     });
 });
 
@@ -93,11 +107,23 @@ app.get('/api/auth/google/login', (req, res, next) => {
 app.get('/api/auth/google/callback', 
     (req, res, next) => {
         console.log('🔍 Google OAuth callback received');
-        passport.authenticate('google', { failureRedirect: '/login.html' })(req, res, next);
+        console.log('Query params:', req.query);
+        console.log('Session:', req.session);
+        
+        passport.authenticate('google', { 
+            failureRedirect: '/login.html?error=oauth_failed',
+            failureMessage: true 
+        })(req, res, next);
     },
     async (req, res) => {
         try {
             console.log('🔍 Processing OAuth callback for user:', req.user?.email);
+            console.log('Full user object:', req.user);
+            
+            if (!req.user) {
+                console.error('❌ No user object in callback');
+                return res.redirect('/login.html?error=no_user');
+            }
             
             // Generate JWT token
             const token = jwt.sign(
@@ -111,7 +137,8 @@ app.get('/api/auth/google/callback',
             res.redirect(`/dashboard.html?token=${token}&test=true`);
         } catch (err) {
             console.error('❌ OAuth callback error:', err);
-            res.redirect('/login.html?error=oauth_failed');
+            console.error('Error stack:', err.stack);
+            res.redirect('/login.html?error=callback_failed');
         }
     }
 );
