@@ -21,6 +21,19 @@ try {
         });
     });
 
+    // Environment variables check
+    app.get('/api/env-test', (req, res) => {
+        console.log('Environment test requested');
+        res.json({
+            nodeEnv: process.env.NODE_ENV || 'not set',
+            hasMongoUri: !!process.env.MONGODB_URI,
+            hasGoogleClientId: !!process.env.GOOGLE_CLIENT_ID,
+            hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+            hasJwtSecret: !!process.env.JWT_SECRET,
+            port: process.env.PORT || 'not set'
+        });
+    });
+
     console.log('Loading environment variables...');
     require('dotenv').config();
     console.log('NODE_ENV:', process.env.NODE_ENV);
@@ -31,11 +44,16 @@ try {
     const mongoose = require('mongoose');
     console.log('✅ Mongoose loaded');
 
-    // Test mongoose connection
+    // Test mongoose connection with better error handling
     if (process.env.MONGODB_URI) {
         mongoose.connect(process.env.MONGODB_URI)
-        .then(() => console.log('✅ MongoDB connected'))
-        .catch(err => console.error('❌ MongoDB error:', err.message));
+        .then(() => {
+            console.log('✅ MongoDB connected successfully');
+        })
+        .catch(err => {
+            console.error('❌ MongoDB connection error:', err.message);
+            console.error('MongoDB error details:', err);
+        });
     } else {
         console.log('⚠️ MongoDB URI not provided, skipping connection');
     }
@@ -52,10 +70,33 @@ try {
     require('./backend/services/passport');
     console.log('✅ Passport config loaded');
 
+    // Add session middleware for passport
+    const session = require('express-session');
+    app.use(session({
+        secret: process.env.JWT_SECRET || 'fallback-secret',
+        resave: false,
+        saveUninitialized: false
+    }));
+    
+    app.use(passport.initialize());
+    app.use(passport.session());
+    console.log('✅ Passport middleware configured');
+
     console.log('Testing auth routes...');
     const { router: authRoutes } = require('./backend/routes/auth');
     app.use('/api/auth', authRoutes);
     console.log('✅ Auth routes loaded');
+
+    // Global error handler for better debugging
+    app.use((err, req, res, next) => {
+        console.error('🚨 OAuth Error:', err);
+        console.error('Error stack:', err.stack);
+        res.status(500).json({ 
+            error: 'OAuth error', 
+            message: err.message,
+            details: process.env.NODE_ENV === 'development' ? err.stack : 'Check logs'
+        });
+    });
 
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => {
