@@ -112,8 +112,13 @@ const logger = winston.createLogger({
   ]
 });
 
-// MongoDB connection with better error handling
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cryptodash')
+// MongoDB connection with better error handling and timeout settings
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cryptodash', {
+    serverSelectionTimeoutMS: 5000, // 5 second timeout
+    socketTimeoutMS: 45000, // 45 second socket timeout
+    bufferMaxEntries: 0, // Disable mongoose buffering
+    bufferCommands: false, // Disable mongoose buffering for commands
+})
 .then(() => {
     logger.info('MongoDB connected successfully');
     console.log('✅ MongoDB connected successfully');
@@ -121,7 +126,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/cryptodas
 .catch(err => {
     logger.error('MongoDB connection error:', err);
     console.error('❌ MongoDB connection failed:', err.message);
-    // Don't exit the process, let other functions work
+    // Continue without MongoDB for OAuth testing
 });
 
 // Health check

@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "simple-oauth-test.js",
+      "src": "backend/server.js",
       "use": "@vercel/node"
     },
     {
@@ -21,7 +21,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/simple-oauth-test.js"
+      "dest": "/backend/server.js"
     },
     {
       "src": "/(.*)",
