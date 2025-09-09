@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "debug-server.js",
+      "src": "minimal-server.js",
       "use": "@vercel/node"
     },
     {
@@ -21,7 +21,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/debug-server.js"
+      "dest": "/minimal-server.js"
     },
     {
       "src": "/(.*)",
