@@ -1,5 +1,5 @@
 // Debug server to identify the crashing module
-console.log('🔍 Starting debug server...');
+console.log('🔍 Starting debug server for cryptodash.tech...');
 
 try {
     console.log('Loading basic dependencies...');
@@ -12,11 +12,12 @@ try {
 
     // Basic health check
     app.get('/api/health', (req, res) => {
-        console.log('Health check hit');
+        console.log('Health check hit for cryptodash.tech');
         res.json({ 
             status: 'ok', 
             timestamp: new Date(),
-            message: 'Debug server running'
+            message: 'CryptoDash.tech debug server running',
+            domain: 'cryptodash.tech'
         });
     });
 
@@ -58,10 +59,10 @@ try {
 
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => {
-        console.log(`🚀 Debug server running on port ${PORT}`);
+        console.log(`🚀 CryptoDash.tech debug server running on port ${PORT}`);
     });
 
 } catch (error) {
-    console.error('🚨 Error in debug server:', error);
+    console.error('🚨 Error in cryptodash.tech debug server:', error);
     console.error('Stack trace:', error.stack);
 }
